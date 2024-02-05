@@ -30,8 +30,9 @@ mixin _$HomeStore on HomeStoreBase, Store {
       AsyncAction('HomeStoreBase.getAllApps', context: context);
 
   @override
-  Future<List<Application>> getAllApps() {
-    return _$getAllAppsAsyncAction.run(() => super.getAllApps());
+  ObservableFuture<List<Application>> getAllApps() {
+    return ObservableFuture<List<Application>>(
+        _$getAllAppsAsyncAction.run(() => super.getAllApps()));
   }
 
   @override

@@ -2,7 +2,8 @@ import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
 class BottomNav extends StatefulWidget {
-  const BottomNav({super.key});
+  final VoidCallback openAppsAndSearch;
+  const BottomNav({super.key, required this.openAppsAndSearch});
 
   @override
   State<BottomNav> createState() => _BottomNavState();
@@ -20,6 +21,13 @@ class _BottomNavState extends State<BottomNav> {
           },
           icon: const Icon(
             Icons.phone,
+            color: Colors.white,
+          ),
+        ),
+        IconButton(
+          onPressed: () => widget.openAppsAndSearch(),
+          icon: const Icon(
+            Icons.search,
             color: Colors.white,
           ),
         ),

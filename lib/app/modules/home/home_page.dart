@@ -2,8 +2,13 @@ import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/apps_and_search_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/bottom_nav_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/favorites_apps_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/swipe_detector_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/system_tray_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/upper_nav_widget.dart';
+import 'package:launcher_hermeneutics/app/theme/bluer_effect.dart';
 import 'home_store.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,55 +33,69 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Material(
       child: SafeArea(
-        child: Container(
-          color: Colors.black,
-          child: Expanded(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const UpperNav(),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 400,
-                      child: Observer(
-                        builder: (context) {
-                          if (store.currentInstalledApps.isNotEmpty) {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: store.currentInstalledApps.length,
-                              itemBuilder: (context, index) => TextButton(
-                                onLongPress: () {
-                                  DeviceApps.openAppSettings(
-                                    store.currentInstalledApps[index]
-                                        .packageName,
-                                  );
-                                },
-                                onPressed: () => DeviceApps.openApp(
-                                  store.currentInstalledApps[index].packageName,
-                                ),
-                                child: Text(
-                                  store.currentInstalledApps[index].appName,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const Text('bruh');
-                          }
-                        },
+        child: Observer(
+          builder: (_) {
+            return Stack(
+              children: [
+                SwipeDetector(
+                  onSwipeUp: () {
+                    store.updateHomeStateTo(
+                        newHomeState: HomePageCurrentState.systemTray);
+                    setState(() {});
+                  },
+                  onSwipeDown: () {
+                    store.updateHomeStateTo(
+                        newHomeState: HomePageCurrentState.favorites);
+                    setState(() {});
+                  },
+                  child: Container(
+                    color: Colors.black,
+                    child: Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const UpperNav(),
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.apps) ...[
+                            AppsAndSearch(store: store),
+                          ],
+                          if (store.homePageCurrentState ==
+                                  HomePageCurrentState.favorites &&
+                              store.currentInstalledApps.isNotEmpty) ...[
+                            FavoritesAppsWidget(
+                                favoritesApps: store.currentInstalledApps),
+                          ],
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.systemTray) ...[
+                            SystemTray(),
+                          ],
+                          BottomNav(
+                            openAppsAndSearch: () {
+                              if (store.homePageCurrentState ==
+                                  HomePageCurrentState.favorites) {
+                                store.updateHomeStateTo(
+                                    newHomeState: HomePageCurrentState.apps);
+                              } else {
+                                store.updateHomeStateTo(
+                                    newHomeState:
+                                        HomePageCurrentState.favorites);
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              const BottomNav(),
-            ],
-          )),
+                Container(
+                  child: store.isPopUpMenuOpen == true
+                      ? const BlurEffect()
+                      : Container(),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

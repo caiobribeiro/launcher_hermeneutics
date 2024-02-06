@@ -27,7 +27,7 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
           child: Text(
             widget.favoritesApps[0].appName,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.grey,
             ),
           ),
         ),
@@ -43,7 +43,7 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
           child: Text(
             widget.favoritesApps[1].appName,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.grey,
             ),
           ),
         ),
@@ -59,7 +59,7 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
           child: Text(
             widget.favoritesApps[2].appName,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.grey,
             ),
           ),
         ),
@@ -75,7 +75,7 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
           child: Text(
             widget.favoritesApps[3].appName,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.grey,
             ),
           ),
         ),
@@ -91,7 +91,7 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
           child: Text(
             widget.favoritesApps[4].appName,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.grey,
             ),
           ),
         ),
@@ -107,7 +107,7 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
           child: Text(
             widget.favoritesApps[5].appName,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.grey,
             ),
           ),
         ),

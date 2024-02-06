@@ -38,6 +38,19 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
 
   @override
   Widget build(BuildContext context) {
+    void searchApp(String query) {
+      widget.store.currentInstalledApps = widget.store.backupInstalledApps;
+      final suggestions = widget.store.currentInstalledApps.where((app) {
+        final appTitle = app.appName.toLowerCase();
+        final input = query.toLowerCase();
+        return appTitle.contains(input);
+      }).toList();
+
+      setState(() {
+        widget.store.currentInstalledApps = suggestions;
+      });
+    }
+
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -46,6 +59,7 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
             width: 300,
             child: TextFormField(
               textAlign: TextAlign.center,
+              onChanged: searchApp,
             ),
           ),
           const SizedBox(
@@ -114,7 +128,7 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
                           child: Text(
                             widget.store.currentInstalledApps[index].appName,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.grey,
                             ),
                           ),
                         ),

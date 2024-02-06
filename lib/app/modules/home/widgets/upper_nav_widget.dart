@@ -1,41 +1,38 @@
-import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UpperNav extends StatefulWidget {
-  const UpperNav({super.key});
+  final VoidCallback toggleCalenderView;
+  const UpperNav({super.key, required this.toggleCalenderView});
 
   @override
   State<UpperNav> createState() => _UpperNavState();
 }
 
 class _UpperNavState extends State<UpperNav> {
+  bool isCalanderOpen = false;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.watch_later,
-            color: Colors.white,
-          ),
+        const SizedBox(
+          height: 80,
         ),
-        TextButton(
-          onPressed: () {
-            CalendarDatePicker(
-                initialDate: DateTime.now(),
-                firstDate: DateTime.now(),
-                lastDate: DateTime.now(),
-                onDateChanged: (a) {});
-          },
-          child: Text(
-            '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-            style: const TextStyle(
-              color: Colors.white,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: widget.toggleCalenderView,
+              child: Text(
+                DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 25,
+                ),
+              ),
             ),
-          ),
-        )
+          ],
+        ),
       ],
     );
   }

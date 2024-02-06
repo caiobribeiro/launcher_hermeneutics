@@ -21,14 +21,14 @@ class _BottomNavState extends State<BottomNav> {
           },
           icon: const Icon(
             Icons.phone,
-            color: Colors.white,
+            color: Colors.grey,
           ),
         ),
         IconButton(
           onPressed: () => widget.openAppsAndSearch(),
           icon: const Icon(
             Icons.search,
-            color: Colors.white,
+            color: Colors.grey,
           ),
         ),
         IconButton(
@@ -37,7 +37,7 @@ class _BottomNavState extends State<BottomNav> {
           },
           icon: const Icon(
             Icons.camera_alt,
-            color: Colors.white,
+            color: Colors.grey,
           ),
         ),
       ],

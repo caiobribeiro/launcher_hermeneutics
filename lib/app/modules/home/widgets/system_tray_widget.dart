@@ -10,7 +10,7 @@ class SystemTray extends StatefulWidget {
 
 class _SystemTrayState extends State<SystemTray> {
   double _volume = 0;
-  bool _showSystemSlider = true;
+  bool _showSystemSlider = false;
   @override
   void initState() {
     super.initState();

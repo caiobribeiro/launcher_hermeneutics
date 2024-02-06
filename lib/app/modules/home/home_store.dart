@@ -23,6 +23,12 @@ abstract class HomeStoreBase with Store {
   List<Application> currentInstalledApps = [];
 
   @observable
+  List<Application> backupInstalledApps = [];
+
+  @action
+  void resetInstalledApps() => currentInstalledApps = backupInstalledApps;
+
+  @observable
   @action
   Future<List<Application>> getAllApps() async {
     currentInstalledApps = await DeviceApps.getInstalledApplications(
@@ -30,6 +36,7 @@ abstract class HomeStoreBase with Store {
       includeSystemApps: true,
       onlyAppsWithLaunchIntent: true,
     );
+    backupInstalledApps = currentInstalledApps;
     return currentInstalledApps;
   }
 }

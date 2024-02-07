@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:launcher_hermeneutics/app/modules/home/widgets/apps_and_search_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/search_all_apps.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/bottom_nav_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/favorites_apps_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/swipe_detector_widget.dart';
@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
                 },
                 onSwipeDown: () {
                   store.updateHomeStateTo(
-                      newHomeState: HomePageCurrentState.favorites);
+                      newHomeState: HomePageCurrentState.apps);
                   setState(() {});
                 },
                 child: Container(
@@ -66,7 +66,7 @@ class HomePageState extends State<HomePage> {
                         ),
                         if (store.homePageCurrentState ==
                             HomePageCurrentState.apps) ...[
-                          AppsAndSearch(store: store),
+                          SearchAllApps(store: store),
                         ],
                         if (store.homePageCurrentState ==
                                 HomePageCurrentState.favorites &&
@@ -79,6 +79,7 @@ class HomePageState extends State<HomePage> {
                           const SystemTray(),
                         ],
                         BottomNav(
+                          store: store,
                           openAppsAndSearch: () {
                             if (store.homePageCurrentState ==
                                 HomePageCurrentState.favorites) {
@@ -95,11 +96,6 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              ),
-              Container(
-                child: store.isPopUpMenuOpen == true
-                    ? const BlurEffect()
-                    : Container(),
               ),
             ],
           );

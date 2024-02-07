@@ -12,8 +12,7 @@ class FavoritesAppsWidget extends StatefulWidget {
 class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
+    return Column(
       children: [
         TextButton(
           onLongPress: () {

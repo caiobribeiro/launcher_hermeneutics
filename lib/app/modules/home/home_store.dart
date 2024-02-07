@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:mobx/mobx.dart';
 import 'package:device_apps/device_apps.dart';
 
@@ -25,6 +27,12 @@ abstract class HomeStoreBase with Store {
   @observable
   List<Application> backupInstalledApps = [];
 
+  @observable
+  String cameraPackageName = '';
+
+  @observable
+  String phonePackageName = '';
+
   @action
   void resetInstalledApps() => currentInstalledApps = backupInstalledApps;
 
@@ -37,6 +45,14 @@ abstract class HomeStoreBase with Store {
       onlyAppsWithLaunchIntent: true,
     );
     backupInstalledApps = currentInstalledApps;
+    for (var i = 0; i < currentInstalledApps.length; i++) {
+      if (currentInstalledApps[i].packageName.contains('dialer')) {
+        phonePackageName = currentInstalledApps[i].packageName;
+      }
+      if (currentInstalledApps[i].packageName.contains('camera')) {
+        cameraPackageName = currentInstalledApps[i].packageName;
+      }
+    }
     return currentInstalledApps;
   }
 }

@@ -1,9 +1,12 @@
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:launcher_hermeneutics/app/modules/home/home_store.dart';
 
 class BottomNav extends StatefulWidget {
   final VoidCallback openAppsAndSearch;
-  const BottomNav({super.key, required this.openAppsAndSearch});
+  final HomeStore store;
+  const BottomNav(
+      {super.key, required this.openAppsAndSearch, required this.store});
 
   @override
   State<BottomNav> createState() => _BottomNavState();
@@ -17,7 +20,7 @@ class _BottomNavState extends State<BottomNav> {
       children: [
         IconButton(
           onPressed: () {
-            DeviceApps.openApp('com.google.android.dialer');
+            DeviceApps.openApp(widget.store.phonePackageName);
           },
           icon: const Icon(
             Icons.phone,
@@ -26,14 +29,16 @@ class _BottomNavState extends State<BottomNav> {
         ),
         IconButton(
           onPressed: () => widget.openAppsAndSearch(),
-          icon: const Icon(
-            Icons.search,
+          icon: Icon(
+            widget.store.homePageCurrentState != HomePageCurrentState.favorites
+                ? Icons.arrow_back
+                : Icons.search,
             color: Colors.grey,
           ),
         ),
         IconButton(
           onPressed: () {
-            DeviceApps.openApp('com.android.camera2');
+            DeviceApps.openApp(widget.store.cameraPackageName);
           },
           icon: const Icon(
             Icons.camera_alt,

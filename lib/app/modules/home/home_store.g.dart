@@ -59,6 +59,54 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  late final _$backupInstalledAppsAtom =
+      Atom(name: 'HomeStoreBase.backupInstalledApps', context: context);
+
+  @override
+  List<Application> get backupInstalledApps {
+    _$backupInstalledAppsAtom.reportRead();
+    return super.backupInstalledApps;
+  }
+
+  @override
+  set backupInstalledApps(List<Application> value) {
+    _$backupInstalledAppsAtom.reportWrite(value, super.backupInstalledApps, () {
+      super.backupInstalledApps = value;
+    });
+  }
+
+  late final _$cameraPackageNameAtom =
+      Atom(name: 'HomeStoreBase.cameraPackageName', context: context);
+
+  @override
+  String get cameraPackageName {
+    _$cameraPackageNameAtom.reportRead();
+    return super.cameraPackageName;
+  }
+
+  @override
+  set cameraPackageName(String value) {
+    _$cameraPackageNameAtom.reportWrite(value, super.cameraPackageName, () {
+      super.cameraPackageName = value;
+    });
+  }
+
+  late final _$phonePackageNameAtom =
+      Atom(name: 'HomeStoreBase.phonePackageName', context: context);
+
+  @override
+  String get phonePackageName {
+    _$phonePackageNameAtom.reportRead();
+    return super.phonePackageName;
+  }
+
+  @override
+  set phonePackageName(String value) {
+    _$phonePackageNameAtom.reportWrite(value, super.phonePackageName, () {
+      super.phonePackageName = value;
+    });
+  }
+
   late final _$getAllAppsAsyncAction =
       AsyncAction('HomeStoreBase.getAllApps', context: context);
 
@@ -83,11 +131,25 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  void resetInstalledApps() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.resetInstalledApps');
+    try {
+      return super.resetInstalledApps();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 homePageCurrentState: ${homePageCurrentState},
 isPopUpMenuOpen: ${isPopUpMenuOpen},
-currentInstalledApps: ${currentInstalledApps}
+currentInstalledApps: ${currentInstalledApps},
+backupInstalledApps: ${backupInstalledApps},
+cameraPackageName: ${cameraPackageName},
+phonePackageName: ${phonePackageName}
     ''';
   }
 }

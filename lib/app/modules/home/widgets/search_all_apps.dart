@@ -1,18 +1,21 @@
+import 'dart:developer';
+
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:launcher_hermeneutics/app/modules/home/home_store.dart';
 
-class AppsAndSearch extends StatefulWidget {
+class SearchAllApps extends StatefulWidget {
   final HomeStore store;
-  const AppsAndSearch({super.key, required this.store});
+  const SearchAllApps({super.key, required this.store});
 
   @override
-  State<AppsAndSearch> createState() => _AppsAndSearchState();
+  State<SearchAllApps> createState() => _SearchAllAppsState();
 }
 
-class _AppsAndSearchState extends State<AppsAndSearch> {
+class _SearchAllAppsState extends State<SearchAllApps> {
   Offset _tapPosition = Offset.zero;
+  final TextEditingController textEditingController = TextEditingController();
 
   void _getTapPosition(TapDownDetails tapPosition) {
     final RenderBox referenceBox = context.findRenderObject() as RenderBox;
@@ -37,6 +40,12 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
   }
 
   @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     void searchApp(String query) {
       widget.store.currentInstalledApps = widget.store.backupInstalledApps;
@@ -45,22 +54,49 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
         final input = query.toLowerCase();
         return appTitle.contains(input);
       }).toList();
+      if (suggestions.length == 1) {
+        final tempPackageName = suggestions[0].packageName;
+        widget.store.currentInstalledApps = widget.store.backupInstalledApps;
 
-      setState(() {
-        widget.store.currentInstalledApps = suggestions;
-      });
+        setState(() {});
+        DeviceApps.openApp(tempPackageName);
+      } else {
+        setState(() {
+          widget.store.currentInstalledApps = suggestions;
+        });
+      }
     }
 
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 300,
-            child: TextFormField(
-              textAlign: TextAlign.center,
-              onChanged: searchApp,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 300,
+                child: TextField(
+                  autofocus: true,
+                  controller: textEditingController,
+                  textAlign: TextAlign.center,
+                  onChanged: (query) {
+                    searchApp(query);
+                    textEditingController.text = query;
+                    setState(() {});
+                  },
+                ),
+              ),
+              if (textEditingController.text != '')
+                IconButton(
+                  onPressed: () {
+                    textEditingController.clear();
+                    widget.store.resetInstalledApps();
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.clear),
+                ),
+            ],
           ),
           const SizedBox(
             height: 10,
@@ -121,10 +157,16 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
                           );
                         },
                         child: TextButton(
-                          onPressed: () => DeviceApps.openApp(
-                            widget
-                                .store.currentInstalledApps[index].packageName,
-                          ),
+                          onPressed: () => {
+                            DeviceApps.openApp(
+                              widget.store.currentInstalledApps[index]
+                                  .packageName,
+                            ),
+                            textEditingController.clear(),
+                            widget.store.resetInstalledApps(),
+                            widget.store.homePageCurrentState =
+                                HomePageCurrentState.favorites,
+                          },
                           child: Text(
                             widget.store.currentInstalledApps[index].appName,
                             style: const TextStyle(
@@ -138,8 +180,7 @@ class _AppsAndSearchState extends State<AppsAndSearch> {
                 } else {
                   return const Column(
                     children: [
-                      Text('loading'),
-                      CircularProgressIndicator(),
+                      Text('No APPs found'),
                     ],
                   );
                 }

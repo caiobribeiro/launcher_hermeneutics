@@ -8,11 +8,7 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Hermeneutics Launcher',
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorSchemeSeed: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
       routerConfig: Modular.routerConfig,
       debugShowCheckedModeBanner: false,
     );

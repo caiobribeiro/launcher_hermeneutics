@@ -1,12 +1,15 @@
-import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:launcher_hermeneutics/app/modules/home/services/isar_service.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/favorite_selector_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/search_all_apps.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/bottom_nav_widget.dart';
-import 'package:launcher_hermeneutics/app/modules/home/widgets/menu_items.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/favorites_apps_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/swipe_detector_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/system_tray_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/upper_nav_widget.dart';
-import 'package:launcher_hermeneutics/app/theme/blue_effect.dart';
-import 'package:popover/popover.dart';
+import 'package:launcher_hermeneutics/app/theme/colors.dart';
 import 'home_store.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,118 +22,109 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   late final HomeStore store;
+  late final IsarService isarService;
 
   @override
   void initState() {
     super.initState();
     store = Modular.get<HomeStore>();
-    store.getAllApps();
+    isarService = Modular.get<IsarService>();
+    store.getFavoriteApps(isarService: isarService);
+    store.updateInstalledApps();
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              color: Colors.black,
-              child: Expanded(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const UpperNav(),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AppButton(),
-                        SizedBox(
-                          height: 400,
-                          child: Observer(
-                            builder: (context) {
-                              if (store.currentInstalledApps.isNotEmpty) {
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: store.currentInstalledApps.length,
-                                  itemBuilder: (context, index) =>
-                                      GestureDetector(
-                                    onLongPress: () {
-                                      showPopover(
-                                        context: context,
-                                        bodyBuilder: (context) =>
-                                            const MenuItems(
-                                          itemText: ['bruh'],
-                                          itemFunction: [],
-                                        ),
-                                        onPop: () =>
-                                            print('Popover was popped!'),
-                                        direction: PopoverDirection.bottom,
-                                        width: 200,
-                                        height: 400,
-                                        arrowHeight: 15,
-                                        arrowWidth: 30,
-                                      );
-                                    },
-                                    onTap: () => DeviceApps.openApp(
-                                      store.currentInstalledApps[index]
-                                          .packageName,
-                                    ),
-                                    child: Text(
-                                      store.currentInstalledApps[index].appName,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return const Text('bruh');
-                              }
+      child: Observer(
+        builder: (_) {
+          return Stack(
+            children: [
+              InkWell(
+                onLongPress: () {
+                  store.homePageCurrentState =
+                      HomePageCurrentState.favoritesSelector;
+                },
+                child: SwipeDetector(
+                  onSwipeUp: () {},
+                  onSwipeDown: () {
+                    store.updateHomeStateTo(
+                        newHomeState: HomePageCurrentState.searchAllApps);
+                    setState(() {});
+                  },
+                  child: Container(
+                    color: black,
+                    child: Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          UpperNav(
+                            toggleCalenderView: () {
+                              showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime.now().add(
+                                  const Duration(days: 356),
+                                ),
+                              );
                             },
                           ),
-                        ),
-                      ],
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.searchAllApps) ...[
+                            SearchAllApps(store: store),
+                          ],
+                          if (store.homePageCurrentState ==
+                                  HomePageCurrentState.favorites &&
+                              store.currentInstalledApps.isNotEmpty) ...[
+                            FavoritesAppsWidget(
+                                favoritesApps: store.favoriteApps),
+                          ],
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.favoritesSelector) ...[
+                            FavoriteSelectorWidget(
+                              homeStore: store,
+                              onSaveFavorites: () async {
+                                await store.saveFavoriteList(
+                                    isarService: isarService);
+                                store.favoriteApps.clear();
+                              },
+                            ),
+                          ],
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.systemTray) ...[
+                            const SystemTray(),
+                          ],
+                          BottomNav(
+                            store: store,
+                            openAppsAndSearch: () async {
+                              if (store.homePageCurrentState ==
+                                  HomePageCurrentState.favoritesSelector) {
+                                await store.getFavoriteApps(
+                                    isarService: isarService);
+                              }
+                              if (store.homePageCurrentState ==
+                                  HomePageCurrentState.favorites) {
+                                store.updateHomeStateTo(
+                                    newHomeState:
+                                        HomePageCurrentState.searchAllApps);
+                              } else {
+                                store.updateHomeStateTo(
+                                    newHomeState:
+                                        HomePageCurrentState.favorites);
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const BottomNav(),
-                ],
-              )),
-            ),
-            store.isPopupMenuOpen == true ? const BlurEffect() : Container(),
-          ],
-        ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
-    );
-  }
-}
-
-class AppButton extends StatelessWidget {
-  const AppButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: const Center(
-          child: Text(
-        'Click Me',
-        style: TextStyle(color: Colors.white),
-      )),
-      onTap: () {
-        showPopover(
-          context: context,
-          bodyBuilder: (context) => const MenuItems(
-            itemText: ['bruh'],
-            itemFunction: [],
-          ),
-          onPop: () => print('Popover was popped!'),
-          direction: PopoverDirection.bottom,
-          width: 200,
-          height: 400,
-          arrowHeight: 15,
-          arrowWidth: 30,
-        );
-      },
     );
   }
 }

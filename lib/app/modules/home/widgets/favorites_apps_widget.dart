@@ -1,8 +1,9 @@
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:launcher_hermeneutics/app/modules/home/classes/applications_entity.dart';
 
 class FavoritesAppsWidget extends StatefulWidget {
-  final List<Application> favoritesApps;
+  final List<ApplicationsEntity> favoritesApps;
   const FavoritesAppsWidget({super.key, required this.favoritesApps});
 
   @override
@@ -12,25 +13,105 @@ class FavoritesAppsWidget extends StatefulWidget {
 class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: widget.favoritesApps.length,
-      itemBuilder: (context, index) => TextButton(
-        onLongPress: () {
-          DeviceApps.openAppSettings(
-            widget.favoritesApps[index].packageName,
-          );
-        },
-        onPressed: () => DeviceApps.openApp(
-          widget.favoritesApps[index].packageName,
-        ),
-        child: Text(
-          widget.favoritesApps[index].appName,
-          style: const TextStyle(
-            color: Colors.white,
+    return Column(
+      children: [
+        TextButton(
+          onLongPress: () {
+            DeviceApps.openAppSettings(
+              widget.favoritesApps[0].packageName,
+            );
+          },
+          onPressed: () => DeviceApps.openApp(
+            widget.favoritesApps[0].packageName,
+          ),
+          child: Text(
+            widget.favoritesApps[0].appName,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
           ),
         ),
-      ),
+        TextButton(
+          onLongPress: () {
+            DeviceApps.openAppSettings(
+              widget.favoritesApps[1].packageName,
+            );
+          },
+          onPressed: () => DeviceApps.openApp(
+            widget.favoritesApps[1].packageName,
+          ),
+          child: Text(
+            widget.favoritesApps[1].appName,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        TextButton(
+          onLongPress: () {
+            DeviceApps.openAppSettings(
+              widget.favoritesApps[2].packageName,
+            );
+          },
+          onPressed: () => DeviceApps.openApp(
+            widget.favoritesApps[2].packageName,
+          ),
+          child: Text(
+            widget.favoritesApps[2].appName,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        TextButton(
+          onLongPress: () {
+            DeviceApps.openAppSettings(
+              widget.favoritesApps[3].packageName,
+            );
+          },
+          onPressed: () => DeviceApps.openApp(
+            widget.favoritesApps[3].packageName,
+          ),
+          child: Text(
+            widget.favoritesApps[3].appName,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        TextButton(
+          onLongPress: () {
+            DeviceApps.openAppSettings(
+              widget.favoritesApps[4].packageName,
+            );
+          },
+          onPressed: () => DeviceApps.openApp(
+            widget.favoritesApps[4].packageName,
+          ),
+          child: Text(
+            widget.favoritesApps[4].appName,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        TextButton(
+          onLongPress: () {
+            DeviceApps.openAppSettings(
+              widget.favoritesApps[5].packageName,
+            );
+          },
+          onPressed: () => DeviceApps.openApp(
+            widget.favoritesApps[5].packageName,
+          ),
+          child: Text(
+            widget.favoritesApps[5].appName,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

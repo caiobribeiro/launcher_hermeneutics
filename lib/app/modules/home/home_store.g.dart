@@ -26,22 +26,6 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
-  late final _$isPopUpMenuOpenAtom =
-      Atom(name: 'HomeStoreBase.isPopUpMenuOpen', context: context);
-
-  @override
-  bool get isPopUpMenuOpen {
-    _$isPopUpMenuOpenAtom.reportRead();
-    return super.isPopUpMenuOpen;
-  }
-
-  @override
-  set isPopUpMenuOpen(bool value) {
-    _$isPopUpMenuOpenAtom.reportWrite(value, super.isPopUpMenuOpen, () {
-      super.isPopUpMenuOpen = value;
-    });
-  }
-
   late final _$currentInstalledAppsAtom =
       Atom(name: 'HomeStoreBase.currentInstalledApps', context: context);
 
@@ -219,7 +203,6 @@ mixin _$HomeStore on HomeStoreBase, Store {
   String toString() {
     return '''
 homePageCurrentState: ${homePageCurrentState},
-isPopUpMenuOpen: ${isPopUpMenuOpen},
 currentInstalledApps: ${currentInstalledApps},
 favoriteApps: ${favoriteApps},
 backupInstalledApps: ${backupInstalledApps},

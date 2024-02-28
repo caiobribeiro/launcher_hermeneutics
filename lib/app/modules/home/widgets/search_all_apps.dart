@@ -16,6 +16,7 @@ class SearchAllApps extends StatefulWidget {
 class _SearchAllAppsState extends State<SearchAllApps> {
   Offset _tapPosition = Offset.zero;
   final TextEditingController textEditingController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   void _getTapPosition(TapDownDetails tapPosition) {
     final RenderBox referenceBox = context.findRenderObject() as RenderBox;
@@ -42,6 +43,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
   @override
   void dispose() {
     textEditingController.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -57,7 +59,9 @@ class _SearchAllAppsState extends State<SearchAllApps> {
       if (suggestions.length == 1) {
         final tempPackageName = suggestions[0].packageName;
         widget.store.currentInstalledApps = widget.store.backupInstalledApps;
-
+        textEditingController.clear();
+        widget.store.resetInstalledApps();
+        widget.store.homePageCurrentState = HomePageCurrentState.favorites;
         setState(() {});
         DeviceApps.openApp(tempPackageName);
       } else {
@@ -78,6 +82,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                 width: 300,
                 child: TextField(
                   autofocus: true,
+                  focusNode: focusNode,
                   controller: textEditingController,
                   textAlign: TextAlign.center,
                   onChanged: (query) {
@@ -92,6 +97,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                   onPressed: () {
                     textEditingController.clear();
                     widget.store.resetInstalledApps();
+                    focusNode.requestFocus();
                     setState(() {});
                   },
                   icon: const Icon(Icons.clear),
@@ -116,7 +122,6 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                         onTapDown: (position) {
                           _getTapPosition(position);
                         },
-                        onTapCancel: () {},
                         onLongPress: () {
                           _showContextMenu(
                             context: context,
@@ -171,6 +176,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                             widget.store.currentInstalledApps[index].appName,
                             style: const TextStyle(
                               color: Colors.grey,
+                              fontSize: 20,
                             ),
                           ),
                         ),

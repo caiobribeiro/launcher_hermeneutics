@@ -24,9 +24,6 @@ abstract class HomeStoreBase with Store {
   }
 
   @observable
-  bool isPopUpMenuOpen = false;
-
-  @observable
   List<Application> currentInstalledApps = [];
 
   @observable

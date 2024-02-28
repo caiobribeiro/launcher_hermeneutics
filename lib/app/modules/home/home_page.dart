@@ -35,26 +35,29 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Observer(
-        builder: (_) {
-          return Stack(
-            children: [
-              InkWell(
-                onLongPress: () {
-                  store.homePageCurrentState =
-                      HomePageCurrentState.favoritesSelector;
-                },
-                child: SwipeDetector(
-                  onSwipeUp: () {},
-                  onSwipeDown: () {
-                    store.updateHomeStateTo(
-                        newHomeState: HomePageCurrentState.searchAllApps);
-                    setState(() {});
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        store.homePageCurrentState = HomePageCurrentState.favorites;
+      },
+      child: Material(
+        child: Observer(
+          builder: (_) {
+            return Stack(
+              children: [
+                InkWell(
+                  onLongPress: () {
+                    store.homePageCurrentState =
+                        HomePageCurrentState.favoritesSelector;
                   },
-                  child: Container(
-                    color: black,
-                    child: Expanded(
+                  child: SwipeDetector(
+                    onSwipeDown: () {
+                      store.updateHomeStateTo(
+                          newHomeState: HomePageCurrentState.searchAllApps);
+                      setState(() {});
+                    },
+                    child: Container(
+                      color: black,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -120,10 +123,10 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

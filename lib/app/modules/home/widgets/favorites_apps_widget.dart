@@ -4,7 +4,8 @@ import 'package:launcher_hermeneutics/app/modules/home/classes/applications_enti
 
 class FavoritesAppsWidget extends StatefulWidget {
   final List<ApplicationsEntity> favoritesApps;
-  const FavoritesAppsWidget({super.key, required this.favoritesApps});
+  const FavoritesAppsWidget({Key? key, required this.favoritesApps})
+      : super(key: key);
 
   @override
   State<FavoritesAppsWidget> createState() => _FavoritesAppsWidgetState();
@@ -15,102 +16,34 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextButton(
-          onLongPress: () {
-            DeviceApps.openAppSettings(
-              widget.favoritesApps[0].packageName,
-            );
-          },
-          onPressed: () => DeviceApps.openApp(
-            widget.favoritesApps[0].packageName,
+        if (widget.favoritesApps.isEmpty)
+          const Text('Long press to choose your favorites apps'),
+        if (widget.favoritesApps.isNotEmpty)
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.favoritesApps.length,
+            itemBuilder: (BuildContext context, int index) {
+              return TextButton(
+                onLongPress: () {
+                  DeviceApps.openAppSettings(
+                    widget.favoritesApps[index].packageName,
+                  );
+                },
+                onPressed: () {
+                  DeviceApps.openApp(
+                    widget.favoritesApps[index].packageName,
+                  );
+                },
+                child: Text(
+                  widget.favoritesApps[index].appName,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 20,
+                  ),
+                ),
+              );
+            },
           ),
-          child: Text(
-            widget.favoritesApps[0].appName,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        TextButton(
-          onLongPress: () {
-            DeviceApps.openAppSettings(
-              widget.favoritesApps[1].packageName,
-            );
-          },
-          onPressed: () => DeviceApps.openApp(
-            widget.favoritesApps[1].packageName,
-          ),
-          child: Text(
-            widget.favoritesApps[1].appName,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        TextButton(
-          onLongPress: () {
-            DeviceApps.openAppSettings(
-              widget.favoritesApps[2].packageName,
-            );
-          },
-          onPressed: () => DeviceApps.openApp(
-            widget.favoritesApps[2].packageName,
-          ),
-          child: Text(
-            widget.favoritesApps[2].appName,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        TextButton(
-          onLongPress: () {
-            DeviceApps.openAppSettings(
-              widget.favoritesApps[3].packageName,
-            );
-          },
-          onPressed: () => DeviceApps.openApp(
-            widget.favoritesApps[3].packageName,
-          ),
-          child: Text(
-            widget.favoritesApps[3].appName,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        TextButton(
-          onLongPress: () {
-            DeviceApps.openAppSettings(
-              widget.favoritesApps[4].packageName,
-            );
-          },
-          onPressed: () => DeviceApps.openApp(
-            widget.favoritesApps[4].packageName,
-          ),
-          child: Text(
-            widget.favoritesApps[4].appName,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        TextButton(
-          onLongPress: () {
-            DeviceApps.openAppSettings(
-              widget.favoritesApps[5].packageName,
-            );
-          },
-          onPressed: () => DeviceApps.openApp(
-            widget.favoritesApps[5].packageName,
-          ),
-          child: Text(
-            widget.favoritesApps[5].appName,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ),
       ],
     );
   }

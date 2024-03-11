@@ -1,5 +1,6 @@
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:launcher_hermeneutics/app/modules/home/classes/applications_entity.dart';
 
 class FavoritesAppsWidget extends StatefulWidget {
@@ -17,7 +18,16 @@ class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
     return Column(
       children: [
         if (widget.favoritesApps.isEmpty)
-          const Text('Long press to choose your favorites apps'),
+          Column(
+            children: [
+              const Text(
+                  'Long press or tap the button bellow to choose your favorites apps'),
+              ElevatedButton(
+                onPressed: () => Modular.to.pushNamed('/settings'),
+                child: const Text('Go to settings page'),
+              ),
+            ],
+          ),
         if (widget.favoritesApps.isNotEmpty)
           ListView.builder(
             shrinkWrap: true,

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:launcher_hermeneutics/app/modules/home/services/isar_service.dart';
-import 'package:launcher_hermeneutics/app/modules/home/widgets/favorite_selector_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/search_all_apps.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/bottom_nav_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/favorites_apps_widget.dart';
-import 'package:launcher_hermeneutics/app/modules/home/widgets/swipe_detector_widget.dart';
-import 'package:launcher_hermeneutics/app/modules/home/widgets/system_tray_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/helpers/swipe_detector_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/upper_nav_widget.dart';
 import 'package:launcher_hermeneutics/app/theme/colors.dart';
 import 'home_store.dart';
@@ -47,9 +45,7 @@ class HomePageState extends State<HomePage> {
               children: [
                 InkWell(
                   onLongPress: () {
-                    store.updateInstalledApps();
-                    store.homePageCurrentState =
-                        HomePageCurrentState.favoritesSelector;
+                    Modular.to.pushNamed('/settings');
                   },
                   child: SwipeDetector(
                     onSwipeDown: () {
@@ -82,21 +78,6 @@ class HomePageState extends State<HomePage> {
                           if (store.homePageCurrentState ==
                               HomePageCurrentState.searchAllApps) ...[
                             SearchAllApps(store: store),
-                          ],
-                          if (store.homePageCurrentState ==
-                              HomePageCurrentState.favoritesSelector) ...[
-                            FavoriteSelectorWidget(
-                              homeStore: store,
-                              onSaveFavorites: () async {
-                                await store.saveFavoriteList(
-                                    isarService: isarService);
-                                store.favoriteApps.clear();
-                              },
-                            ),
-                          ],
-                          if (store.homePageCurrentState ==
-                              HomePageCurrentState.systemTray) ...[
-                            const SystemTray(),
                           ],
                           BottomNav(
                             store: store,

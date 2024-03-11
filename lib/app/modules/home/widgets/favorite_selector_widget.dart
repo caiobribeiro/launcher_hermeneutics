@@ -1,70 +1,101 @@
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:launcher_hermeneutics/app/modules/home/home_store.dart';
+import 'package:launcher_hermeneutics/app/modules/home/services/isar_service.dart';
 
 class FavoriteSelectorWidget extends StatefulWidget {
-  final HomeStore homeStore;
-  final Function onSaveFavorites;
-
-  const FavoriteSelectorWidget(
-      {super.key, required this.homeStore, required this.onSaveFavorites});
+  const FavoriteSelectorWidget({super.key});
 
   @override
   State<FavoriteSelectorWidget> createState() => _FavoriteSelectorWidgetState();
 }
 
 class _FavoriteSelectorWidgetState extends State<FavoriteSelectorWidget> {
+  late final HomeStore store;
+  late final IsarService isarService;
+
+  @override
+  void initState() {
+    super.initState();
+    store = Modular.get<HomeStore>();
+    isarService = Modular.get<IsarService>();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('The first six apps will be your favorites'),
-        SizedBox(
-          height: 400,
-          child: Observer(
-            builder: (_) {
-              List<Widget> myReoderableApps = [];
-              for (int index = 0;
-                  index < widget.homeStore.backupInstalledApps.length;
-                  index += 1) {
-                bool isSelected = false;
-                myReoderableApps.add(
-                  ListTile(
-                    key: Key('$index'),
-                    tileColor: Colors.white,
-                    title: Text(
-                        '$index ${widget.homeStore.backupInstalledApps[index].appName}'),
-                    selected: isSelected,
-                  ),
-                );
-              }
-
-              return ReorderableListView(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                children: myReoderableApps,
-                onReorder: (int oldIndex, int newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    final Application itemName =
-                        widget.homeStore.backupInstalledApps.removeAt(oldIndex);
-                    widget.homeStore.backupInstalledApps
-                        .insert(newIndex, itemName);
-                  });
-                },
-              );
-            },
+    const snackBar = SnackBar(
+      content: Text('Selection saved'),
+    );
+    return Container(
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black12,
+        border: Border.all(width: 2),
+        borderRadius: BorderRadius.circular(
+          10,
+        ),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 20,
           ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            widget.onSaveFavorites();
-          },
-          child: const Text('Save selection'),
-        ),
-      ],
+          const Text(
+            'Hold the item and move up or down to define the position',
+          ),
+          const Text('The first six apps will be your favorites'),
+          ElevatedButton(
+            onPressed: () async {
+              await store.saveFavoriteList(isarService: isarService);
+              store.favoriteApps.clear();
+              await store.updateInstalledApps();
+              await store.getFavoriteApps(isarService: isarService);
+              // ignore: use_build_context_synchronously
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              Modular.to.pop();
+            },
+            child: const Text('Save selection'),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Observer(
+              builder: (_) {
+                List<Widget> myReoderableApps = [];
+                for (int index = 0;
+                    index < store.backupInstalledApps.length;
+                    index += 1) {
+                  bool isSelected = false;
+                  myReoderableApps.add(
+                    ListTile(
+                      key: Key('$index'),
+                      title: Text(
+                          '$index - ${store.backupInstalledApps[index].appName}'),
+                      selected: isSelected,
+                    ),
+                  );
+                }
+
+                return ReorderableListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  children: myReoderableApps,
+                  onReorder: (int oldIndex, int newIndex) {
+                    setState(() {
+                      if (oldIndex < newIndex) {
+                        newIndex -= 1;
+                      }
+                      final Application itemName =
+                          store.backupInstalledApps.removeAt(oldIndex);
+                      store.backupInstalledApps.insert(newIndex, itemName);
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -47,6 +47,7 @@ class HomePageState extends State<HomePage> {
               children: [
                 InkWell(
                   onLongPress: () {
+                    store.updateInstalledApps();
                     store.homePageCurrentState =
                         HomePageCurrentState.favoritesSelector;
                   },
@@ -73,14 +74,14 @@ class HomePageState extends State<HomePage> {
                             },
                           ),
                           if (store.homePageCurrentState ==
-                              HomePageCurrentState.searchAllApps) ...[
-                            SearchAllApps(store: store),
-                          ],
-                          if (store.homePageCurrentState ==
                                   HomePageCurrentState.favorites &&
                               store.currentInstalledApps.isNotEmpty) ...[
                             FavoritesAppsWidget(
                                 favoritesApps: store.favoriteApps),
+                          ],
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.searchAllApps) ...[
+                            SearchAllApps(store: store),
                           ],
                           if (store.homePageCurrentState ==
                               HomePageCurrentState.favoritesSelector) ...[
@@ -100,6 +101,7 @@ class HomePageState extends State<HomePage> {
                           BottomNav(
                             store: store,
                             openAppsAndSearch: () async {
+                              store.updateInstalledApps();
                               if (store.homePageCurrentState ==
                                   HomePageCurrentState.favoritesSelector) {
                                 await store.getFavoriteApps(

@@ -6,6 +6,7 @@ import 'package:launcher_hermeneutics/app/modules/home/widgets/search_all_apps.d
 import 'package:launcher_hermeneutics/app/modules/home/widgets/bottom_nav_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/favorites_apps_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/helpers/swipe_detector_widget.dart';
+import 'package:launcher_hermeneutics/app/modules/home/widgets/system_shortcuts_widget.dart';
 import 'package:launcher_hermeneutics/app/modules/home/widgets/upper_nav_widget.dart';
 import 'package:launcher_hermeneutics/app/theme/colors.dart';
 import 'home_store.dart';
@@ -31,6 +32,18 @@ class HomePageState extends State<HomePage> {
     store.updateInstalledApps();
   }
 
+  handleNavigation() async {
+    if (store.homePageCurrentState == HomePageCurrentState.favoritesSelector) {
+      await store.getFavoriteApps(isarService: isarService);
+    }
+    if (store.homePageCurrentState == HomePageCurrentState.favorites) {
+      store.updateHomeStateTo(newHomeState: HomePageCurrentState.searchAllApps);
+    } else {
+      store.updateHomeStateTo(newHomeState: HomePageCurrentState.favorites);
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -52,6 +65,10 @@ class HomePageState extends State<HomePage> {
                       store.updateHomeStateTo(
                           newHomeState: HomePageCurrentState.searchAllApps);
                       setState(() {});
+                    },
+                    onSwipeUp: () {
+                      store.homePageCurrentState =
+                          HomePageCurrentState.settings;
                     },
                     child: Container(
                       color: black,
@@ -77,28 +94,16 @@ class HomePageState extends State<HomePage> {
                           ],
                           if (store.homePageCurrentState ==
                               HomePageCurrentState.searchAllApps) ...[
-                            SearchAllApps(store: store),
+                            const SearchAllApps(),
+                          ],
+                          if (store.homePageCurrentState ==
+                              HomePageCurrentState.settings) ...[
+                            const SystemShortcutsWidget(),
                           ],
                           BottomNav(
-                            store: store,
                             openAppsAndSearch: () async {
                               store.updateInstalledApps();
-                              if (store.homePageCurrentState ==
-                                  HomePageCurrentState.favoritesSelector) {
-                                await store.getFavoriteApps(
-                                    isarService: isarService);
-                              }
-                              if (store.homePageCurrentState ==
-                                  HomePageCurrentState.favorites) {
-                                store.updateHomeStateTo(
-                                    newHomeState:
-                                        HomePageCurrentState.searchAllApps);
-                              } else {
-                                store.updateHomeStateTo(
-                                    newHomeState:
-                                        HomePageCurrentState.favorites);
-                              }
-                              setState(() {});
+                              handleNavigation();
                             },
                           ),
                         ],

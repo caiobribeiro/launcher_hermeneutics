@@ -3,20 +3,29 @@
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:launcher_hermeneutics/app/modules/home/home_store.dart';
 
 class SearchAllApps extends StatefulWidget {
-  final HomeStore store;
-  const SearchAllApps({super.key, required this.store});
+  const SearchAllApps({
+    super.key,
+  });
 
   @override
   State<SearchAllApps> createState() => _SearchAllAppsState();
 }
 
 class _SearchAllAppsState extends State<SearchAllApps> {
+  late final HomeStore store;
   Offset _tapPosition = Offset.zero;
   final TextEditingController textEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    store = Modular.get<HomeStore>();
+  }
 
   void _getTapPosition(TapDownDetails tapPosition) {
     final RenderBox referenceBox = context.findRenderObject() as RenderBox;
@@ -50,23 +59,23 @@ class _SearchAllAppsState extends State<SearchAllApps> {
   @override
   Widget build(BuildContext context) {
     void searchApp(String query) {
-      widget.store.currentInstalledApps = widget.store.backupInstalledApps;
-      final suggestions = widget.store.currentInstalledApps.where((app) {
+      store.currentInstalledApps = store.backupInstalledApps;
+      final suggestions = store.currentInstalledApps.where((app) {
         final appTitle = app.appName.toLowerCase();
         final input = query.toLowerCase();
         return appTitle.contains(input);
       }).toList();
       if (suggestions.length == 1) {
         final tempPackageName = suggestions[0].packageName;
-        widget.store.currentInstalledApps = widget.store.backupInstalledApps;
+        store.currentInstalledApps = store.backupInstalledApps;
         textEditingController.clear();
-        widget.store.resetInstalledApps();
-        widget.store.homePageCurrentState = HomePageCurrentState.favorites;
+        store.resetInstalledApps();
+        store.homePageCurrentState = HomePageCurrentState.favorites;
         setState(() {});
         DeviceApps.openApp(tempPackageName);
       } else {
         setState(() {
-          widget.store.currentInstalledApps = suggestions;
+          store.currentInstalledApps = suggestions;
         });
       }
     }
@@ -96,7 +105,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                 IconButton(
                   onPressed: () {
                     textEditingController.clear();
-                    widget.store.resetInstalledApps();
+                    store.resetInstalledApps();
                     focusNode.requestFocus();
                     setState(() {});
                   },
@@ -111,13 +120,13 @@ class _SearchAllAppsState extends State<SearchAllApps> {
             height: 400,
             child: Observer(
               builder: (context) {
-                if (widget.store.currentInstalledApps.isNotEmpty) {
+                if (store.currentInstalledApps.isNotEmpty) {
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount: widget.store.currentInstalledApps.length,
+                    itemCount: store.currentInstalledApps.length,
                     itemBuilder: (context, index) {
-                      final application = widget.store
-                          .currentInstalledApps[index] as ApplicationWithIcon;
+                      final application = store.currentInstalledApps[index]
+                          as ApplicationWithIcon;
                       return GestureDetector(
                         onTapDown: (position) {
                           _getTapPosition(position);
@@ -130,7 +139,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                                 value: "Information",
                                 onTap: () {
                                   DeviceApps.openAppSettings(
-                                    widget.store.currentInstalledApps[index]
+                                    store.currentInstalledApps[index]
                                         .packageName,
                                   );
                                 },
@@ -146,7 +155,7 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                                 value: "Information",
                                 onTap: () {
                                   DeviceApps.uninstallApp(
-                                    widget.store.currentInstalledApps[index]
+                                    store.currentInstalledApps[index]
                                         .packageName,
                                   );
                                 },
@@ -164,16 +173,15 @@ class _SearchAllAppsState extends State<SearchAllApps> {
                         child: TextButton(
                           onPressed: () => {
                             DeviceApps.openApp(
-                              widget.store.currentInstalledApps[index]
-                                  .packageName,
+                              store.currentInstalledApps[index].packageName,
                             ),
                             textEditingController.clear(),
-                            widget.store.resetInstalledApps(),
-                            widget.store.homePageCurrentState =
+                            store.resetInstalledApps(),
+                            store.homePageCurrentState =
                                 HomePageCurrentState.favorites,
                           },
                           child: Text(
-                            widget.store.currentInstalledApps[index].appName,
+                            store.currentInstalledApps[index].appName,
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 20,

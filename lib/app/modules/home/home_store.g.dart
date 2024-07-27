@@ -107,6 +107,38 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  late final _$settingsPackageNameAtom =
+      Atom(name: 'HomeStoreBase.settingsPackageName', context: context);
+
+  @override
+  String get settingsPackageName {
+    _$settingsPackageNameAtom.reportRead();
+    return super.settingsPackageName;
+  }
+
+  @override
+  set settingsPackageName(String value) {
+    _$settingsPackageNameAtom.reportWrite(value, super.settingsPackageName, () {
+      super.settingsPackageName = value;
+    });
+  }
+
+  late final _$clockPackageNameAtom =
+      Atom(name: 'HomeStoreBase.clockPackageName', context: context);
+
+  @override
+  String get clockPackageName {
+    _$clockPackageNameAtom.reportRead();
+    return super.clockPackageName;
+  }
+
+  @override
+  set clockPackageName(String value) {
+    _$clockPackageNameAtom.reportWrite(value, super.clockPackageName, () {
+      super.clockPackageName = value;
+    });
+  }
+
   late final _$saveFavoriteListAsyncAction =
       AsyncAction('HomeStoreBase.saveFavoriteList', context: context);
 
@@ -200,6 +232,28 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  dynamic populateClock() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.populateClock');
+    try {
+      return super.populateClock();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic populateSettings() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.populateSettings');
+    try {
+      return super.populateSettings();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 homePageCurrentState: ${homePageCurrentState},
@@ -207,7 +261,9 @@ currentInstalledApps: ${currentInstalledApps},
 favoriteApps: ${favoriteApps},
 backupInstalledApps: ${backupInstalledApps},
 cameraPackageName: ${cameraPackageName},
-phonePackageName: ${phonePackageName}
+phonePackageName: ${phonePackageName},
+settingsPackageName: ${settingsPackageName},
+clockPackageName: ${clockPackageName}
     ''';
   }
 }

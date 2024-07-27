@@ -1,18 +1,28 @@
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:launcher_hermeneutics/app/modules/home/home_store.dart';
 
 class BottomNav extends StatefulWidget {
   final VoidCallback openAppsAndSearch;
-  final HomeStore store;
-  const BottomNav(
-      {super.key, required this.openAppsAndSearch, required this.store});
+  const BottomNav({
+    super.key,
+    required this.openAppsAndSearch,
+  });
 
   @override
   State<BottomNav> createState() => _BottomNavState();
 }
 
 class _BottomNavState extends State<BottomNav> {
+  late final HomeStore store;
+
+  @override
+  void initState() {
+    super.initState();
+    store = Modular.get<HomeStore>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -20,7 +30,7 @@ class _BottomNavState extends State<BottomNav> {
       children: [
         IconButton(
           onPressed: () {
-            DeviceApps.openApp(widget.store.phonePackageName);
+            DeviceApps.openApp(store.phonePackageName);
           },
           icon: const Icon(
             Icons.phone,
@@ -30,7 +40,7 @@ class _BottomNavState extends State<BottomNav> {
         IconButton(
           onPressed: () => widget.openAppsAndSearch(),
           icon: Icon(
-            widget.store.homePageCurrentState != HomePageCurrentState.favorites
+            store.homePageCurrentState != HomePageCurrentState.favorites
                 ? Icons.arrow_back
                 : Icons.search,
             color: Colors.grey,
@@ -38,7 +48,7 @@ class _BottomNavState extends State<BottomNav> {
         ),
         IconButton(
           onPressed: () {
-            DeviceApps.openApp(widget.store.cameraPackageName);
+            DeviceApps.openApp(store.cameraPackageName);
           },
           icon: const Icon(
             Icons.camera_alt,

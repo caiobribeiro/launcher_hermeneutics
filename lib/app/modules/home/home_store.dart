@@ -2,6 +2,7 @@ import 'package:launcher_hermeneutics/app/modules/home/classes/applications_enti
 import 'package:launcher_hermeneutics/app/modules/home/services/isar_service.dart';
 import 'package:mobx/mobx.dart';
 import 'package:device_apps/device_apps.dart';
+import 'package:collection/collection.dart';
 
 part 'home_store.g.dart';
 
@@ -11,7 +12,8 @@ enum HomePageCurrentState {
   favorites,
   searchAllApps,
   systemTray,
-  favoritesSelector
+  favoritesSelector,
+  settings
 }
 
 abstract class HomeStoreBase with Store {
@@ -19,9 +21,8 @@ abstract class HomeStoreBase with Store {
   HomePageCurrentState homePageCurrentState = HomePageCurrentState.favorites;
 
   @action
-  void updateHomeStateTo({required HomePageCurrentState newHomeState}) {
-    homePageCurrentState = newHomeState;
-  }
+  void updateHomeStateTo({required HomePageCurrentState newHomeState}) =>
+      homePageCurrentState = newHomeState;
 
   @observable
   List<Application> currentInstalledApps = [];
@@ -37,6 +38,12 @@ abstract class HomeStoreBase with Store {
 
   @observable
   String phonePackageName = '';
+
+  @observable
+  String settingsPackageName = '';
+
+  @observable
+  String clockPackageName = '';
 
   @action
   void resetInstalledApps() => currentInstalledApps = backupInstalledApps;
@@ -60,20 +67,31 @@ abstract class HomeStoreBase with Store {
 
   @action
   Future<List<Application>> getAllApps() async {
-    currentInstalledApps = await DeviceApps.getInstalledApplications(
+    final freshCurrentApps = await DeviceApps.getInstalledApplications(
       includeAppIcons: true,
       includeSystemApps: true,
       onlyAppsWithLaunchIntent: true,
     );
-    return currentInstalledApps;
+    return freshCurrentApps;
   }
 
   @action
   Future<void> updateInstalledApps() async {
-    currentInstalledApps = await getAllApps();
-    backupInstalledApps = currentInstalledApps;
+    final freshCurrentAllApps = await getAllApps();
+    Function areTheseListEquals = const ListEquality().equals;
+    if (backupInstalledApps.isEmpty || currentInstalledApps.isEmpty) {
+      currentInstalledApps = freshCurrentAllApps;
+      backupInstalledApps = freshCurrentAllApps;
+    }
+
+    if (!areTheseListEquals(backupInstalledApps, freshCurrentAllApps)) {
+      currentInstalledApps = freshCurrentAllApps;
+      backupInstalledApps = freshCurrentAllApps;
+    }
     populateDialer();
     populateCamera();
+    populateClock();
+    populateSettings();
   }
 
   @action
@@ -81,6 +99,7 @@ abstract class HomeStoreBase with Store {
     for (var i = 0; i < currentInstalledApps.length; i++) {
       if (currentInstalledApps[i].packageName.contains('dialer')) {
         phonePackageName = currentInstalledApps[i].packageName;
+        break;
       }
     }
   }
@@ -90,6 +109,27 @@ abstract class HomeStoreBase with Store {
     for (var i = 0; i < currentInstalledApps.length; i++) {
       if (currentInstalledApps[i].packageName.contains('camera')) {
         cameraPackageName = currentInstalledApps[i].packageName;
+        break;
+      }
+    }
+  }
+
+  @action
+  populateClock() {
+    for (var i = 0; i < currentInstalledApps.length; i++) {
+      if (currentInstalledApps[i].packageName.contains('deskclock')) {
+        clockPackageName = currentInstalledApps[i].packageName;
+        break;
+      }
+    }
+  }
+
+  @action
+  populateSettings() {
+    for (var i = 0; i < currentInstalledApps.length; i++) {
+      if (currentInstalledApps[i].packageName.contains('settings')) {
+        settingsPackageName = currentInstalledApps[i].packageName;
+        break;
       }
     }
   }

@@ -67,8 +67,14 @@ class HomePageState extends State<HomePage> {
                       setState(() {});
                     },
                     onSwipeUp: () {
-                      store.homePageCurrentState =
-                          HomePageCurrentState.settings;
+                      if (store.homePageCurrentState ==
+                          HomePageCurrentState.settings) {
+                        store.homePageCurrentState =
+                            HomePageCurrentState.favorites;
+                      } else {
+                        store.homePageCurrentState =
+                            HomePageCurrentState.settings;
+                      }
                     },
                     child: Container(
                       color: black,

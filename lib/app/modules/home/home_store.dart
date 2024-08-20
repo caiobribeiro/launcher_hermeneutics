@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
+import 'package:device_apps/device_apps.dart';
+import 'package:flutter/foundation.dart';
+import 'package:mobx/mobx.dart';
+
 import 'package:launcher_hermeneutics/app/modules/home/classes/applications_entity.dart';
 import 'package:launcher_hermeneutics/app/modules/home/services/isar_service.dart';
-import 'package:mobx/mobx.dart';
-import 'package:device_apps/device_apps.dart';
-import 'package:collection/collection.dart';
 
 part 'home_store.g.dart';
 
@@ -45,6 +47,9 @@ abstract class HomeStoreBase with Store {
   @observable
   String clockPackageName = '';
 
+  @observable
+  String calculatorPackageName = '';
+
   @action
   void resetInstalledApps() => currentInstalledApps = backupInstalledApps;
 
@@ -72,6 +77,7 @@ abstract class HomeStoreBase with Store {
       includeSystemApps: true,
       onlyAppsWithLaunchIntent: true,
     );
+
     return freshCurrentApps;
   }
 
@@ -117,7 +123,7 @@ abstract class HomeStoreBase with Store {
   @action
   populateClock() {
     for (var i = 0; i < currentInstalledApps.length; i++) {
-      if (currentInstalledApps[i].packageName.contains('deskclock')) {
+      if (currentInstalledApps[i].packageName.contains('clock')) {
         clockPackageName = currentInstalledApps[i].packageName;
         break;
       }
@@ -129,6 +135,16 @@ abstract class HomeStoreBase with Store {
     for (var i = 0; i < currentInstalledApps.length; i++) {
       if (currentInstalledApps[i].packageName.contains('settings')) {
         settingsPackageName = currentInstalledApps[i].packageName;
+        break;
+      }
+    }
+  }
+
+  @action
+  populateCalculator() {
+    for (var i = 0; i < currentInstalledApps.length; i++) {
+      if (currentInstalledApps[i].packageName.contains('settings')) {
+        calculatorPackageName = currentInstalledApps[i].packageName;
         break;
       }
     }

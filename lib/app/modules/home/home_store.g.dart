@@ -139,6 +139,23 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  late final _$calculatorPackageNameAtom =
+      Atom(name: 'HomeStoreBase.calculatorPackageName', context: context);
+
+  @override
+  String get calculatorPackageName {
+    _$calculatorPackageNameAtom.reportRead();
+    return super.calculatorPackageName;
+  }
+
+  @override
+  set calculatorPackageName(String value) {
+    _$calculatorPackageNameAtom.reportWrite(value, super.calculatorPackageName,
+        () {
+      super.calculatorPackageName = value;
+    });
+  }
+
   late final _$saveFavoriteListAsyncAction =
       AsyncAction('HomeStoreBase.saveFavoriteList', context: context);
 
@@ -254,6 +271,17 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  dynamic populateCalculator() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.populateCalculator');
+    try {
+      return super.populateCalculator();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 homePageCurrentState: ${homePageCurrentState},
@@ -263,7 +291,8 @@ backupInstalledApps: ${backupInstalledApps},
 cameraPackageName: ${cameraPackageName},
 phonePackageName: ${phonePackageName},
 settingsPackageName: ${settingsPackageName},
-clockPackageName: ${clockPackageName}
+clockPackageName: ${clockPackageName},
+calculatorPackageName: ${calculatorPackageName}
     ''';
   }
 }

@@ -15,9 +15,6 @@ class _UpperNavState extends State<UpperNav> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: 80,
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

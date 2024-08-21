@@ -1,10 +1,9 @@
-import 'package:collection/collection.dart';
 import 'package:device_apps/device_apps.dart';
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:launcher_hermeneutics/app/modules/home/classes/applications_entity.dart';
 import 'package:launcher_hermeneutics/app/modules/home/services/isar_service.dart';
+import 'package:collection/collection.dart';
 
 part 'home_store.g.dart';
 
@@ -98,6 +97,7 @@ abstract class HomeStoreBase with Store {
     populateCamera();
     populateClock();
     populateSettings();
+    populateCalculator();
   }
 
   @action
@@ -143,7 +143,7 @@ abstract class HomeStoreBase with Store {
   @action
   populateCalculator() {
     for (var i = 0; i < currentInstalledApps.length; i++) {
-      if (currentInstalledApps[i].packageName.contains('settings')) {
+      if (currentInstalledApps[i].packageName.contains('calculator')) {
         calculatorPackageName = currentInstalledApps[i].packageName;
         break;
       }

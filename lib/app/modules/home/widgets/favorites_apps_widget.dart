@@ -15,46 +15,46 @@ class FavoritesAppsWidget extends StatefulWidget {
 class _FavoritesAppsWidgetState extends State<FavoritesAppsWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (widget.favoritesApps.isEmpty)
-          Column(
-            children: [
-              const Text(
-                  'Long press or tap the button bellow to choose your favorites apps'),
-              ElevatedButton(
-                onPressed: () => Modular.to.pushNamed('/settings'),
-                child: const Text('Go to settings page'),
-              ),
-            ],
-          ),
-        if (widget.favoritesApps.isNotEmpty)
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: widget.favoritesApps.length,
-            itemBuilder: (BuildContext context, int index) {
-              return TextButton(
-                onLongPress: () {
-                  DeviceApps.openAppSettings(
-                    widget.favoritesApps[index].packageName,
-                  );
-                },
-                onPressed: () {
-                  DeviceApps.openApp(
-                    widget.favoritesApps[index].packageName,
-                  );
-                },
-                child: Text(
-                  widget.favoritesApps[index].appName,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 20,
+    return SizedBox(
+      width: 500,
+      child: Column(
+        children: [
+          if (widget.favoritesApps.isEmpty) ...[
+            const Text(
+                'Long press or tap the button bellow to choose your favorites apps'),
+            ElevatedButton(
+              onPressed: () => Modular.to.pushNamed('/settings'),
+              child: const Text('Go to settings page'),
+            ),
+          ],
+          if (widget.favoritesApps.isNotEmpty)
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: widget.favoritesApps.length,
+              itemBuilder: (BuildContext context, int index) {
+                return TextButton(
+                  onLongPress: () {
+                    DeviceApps.openAppSettings(
+                      widget.favoritesApps[index].packageName,
+                    );
+                  },
+                  onPressed: () {
+                    DeviceApps.openApp(
+                      widget.favoritesApps[index].packageName,
+                    );
+                  },
+                  child: Text(
+                    widget.favoritesApps[index].appName,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 20,
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-      ],
+                );
+              },
+            ),
+        ],
+      ),
     );
   }
 }
